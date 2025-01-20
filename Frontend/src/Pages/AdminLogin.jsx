@@ -1,21 +1,33 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const AdminLogin = () => {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const HandelSubmit = (e) => {
+  const HandelSubmit = async (e) => {
     e.preventDefault();
- 
-    if (Email === "admin@gmail.com" && Password === "123") {
-      sessionStorage.setItem("Admin", "hii");
-      console.log("Login successful");
+
+    await axios.post(`http://localhost/api/v1/admin/Login`, {
+      email: Email,
+      password: Password,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      console.log(res.data);
+      const { AdminToken } = res.data
+
+      sessionStorage.setItem("Admin", AdminToken);
+      toast.success("Admin Login in successful!");
       navigate("/admin/");
-    } else {
-      console.log("Invalid credentials");
-    }
+    }).catch((err) => {
+      console.log(err);
+      toast.error(err.response.data.message || "Admin Login failed.");
+    })
+
   };
 
   return (

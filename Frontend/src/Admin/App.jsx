@@ -14,17 +14,17 @@ import Review from "./Components/Review.jsx";
 import Booking from "./Components/Booking.jsx";
 import User from "./Components/User.jsx";
 import AddRoom from "./Components/Utils/AddRoom.jsx";
+import EditRoom from "./Components/Utils/EditRoom.jsx";
 const App = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    let AdminKey = sessionStorage.getItem("Admin");
-    if (!AdminKey) {
-      navigate("/admin/login");
-    }
-  });
   const [Response, setResponse] = useState(false);
   const [menu, setMenu] = useState(false);
   const [PopUp, setPopUp] = useState(false);
+  const navigate = useNavigate();
+  let AdminKey = sessionStorage.getItem("Admin");
+  if (AdminKey === null || !AdminKey) {
+    navigate("/admin/login");
+  }
+
   return (
     <div className="w-full xl:w-[1280px] flex flex-col font-Poppins p-0 overflow-hidden   ">
       <style>
@@ -43,11 +43,9 @@ const App = () => {
               className="text-xl cursor-pointer "
             />
             {PopUp && (
-              <div onPointerLeave={()=>setPopUp(false)} className=" border flex flex-col gap-4 border-purple-600 absolute top-0 right-0 w-80   bg-white/90 p-5 rounded-lg">
-             <h1 className="text-2xl">Admin</h1>
-             <div>
-              <button className="px-4 py-1  bg-purple-600 hover:bg-purple-700 text-lg text-white rounded-lg font-medium flex items-center justify-center">LogOut</button>
-             </div>
+              <div onPointerLeave={() => setPopUp(false)} className=" border flex flex-col gap-4 border-purple-600 absolute top-0 right-0 w-80   bg-white/90 p-5 rounded-lg">
+                <h1 className="text-2xl">Admin</h1>
+                
               </div>
             )}
           </div>
@@ -112,6 +110,7 @@ const App = () => {
             <Route path="/Booking" element={<Booking />} />
             <Route path="/User" element={<User />} />
             <Route path="/AddRoom" element={<AddRoom />} />
+            <Route path="/EditRoom" element={<EditRoom />} />
           </Routes>
         </div>
       </div>

@@ -11,13 +11,7 @@ import { MdAttachMoney, MdDeleteForever } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 const BookingRooms = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    let AdminKey = sessionStorage.getItem("Admin");
-    if (!AdminKey) {
-      navigate("/admin/login");
-    }
-
-  })
+ 
   let users = [
     {
       id: 1,

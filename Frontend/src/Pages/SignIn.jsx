@@ -4,53 +4,46 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
+  const [inputEmail, setInputEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const token = sessionStorage.getItem("Token");
-
-  if (!token || token === "false") {
-    navigate("/SignUP");
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!inputEmail || !password) {
       toast.error("Please fill in all fields.");
       return;
     }
-
-    setLoading(true); 
-
+    setLoading(true);
     try {
-      const verifyToken = token.split("+")[1];
-      const data = { email, password };
-
-      const response = await axios.post(
-        "http://localhost/api/user/signin",
+      const data = { email: inputEmail, password };
+      await axios.post(
+        `http://localhost/api/v1/user/signin`,
         data,
         {
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${verifyToken}`,
           },
         }
-      );
+      ).then((response) => {
+        console.log(response);
 
-      console.log(response.data); 
-      toast.success("Sign in successful!");
-      // navigate("/"); 
+        const { email, name, Token } = response.data;
+        console.log(Token);
+
+        localStorage.setItem("AuthToken", `Giga+${Token}+Luxe`);
+
+        toast.success("Sign in successful!");
+        navigate("/");
+      })
+
     } catch (error) {
-      console.error(error);
       if (error.response) {
         toast.error(error.response.data.message || "Sign In failed.");
-      } else {
-        toast.error("An error occurred. Please try again.");
       }
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -64,8 +57,8 @@ const SignIn = () => {
               <label>Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={inputEmail}
+                onChange={(e) => setInputEmail(e.target.value)}
                 className="border border-purple-600 py-2 px-3 rounded-md outline-none"
                 placeholder="Enter Your Email"
               />
@@ -85,7 +78,7 @@ const SignIn = () => {
             <button
               onClick={handleSubmit}
               className="px-6 py-2 mt-4 bg-purple-600 hover:bg-purple-700 text-lg text-white rounded-lg font-medium flex items-center justify-center"
-              disabled={loading} 
+              disabled={loading}
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>

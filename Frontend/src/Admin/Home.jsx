@@ -13,14 +13,11 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    let AdminKey = sessionStorage.getItem("Admin");
-    if (!AdminKey) {
-      navigate("/admin/login");
-    }
+  let AdminKey = sessionStorage.getItem("Admin");
+  if (AdminKey === null) {
+    navigate("/admin/login");
+  }
 
-  })
-  
   let users = [
     {
       id: 1,
@@ -160,9 +157,9 @@ const Home = () => {
           <h1 className="font-semibold">Booking Details</h1>
 
           <div className="relative ">
-          
-              <BookingRooms />
-  
+
+            <BookingRooms />
+
           </div>
         </div>
       </div>

@@ -40,17 +40,21 @@ body {
 .mySwiper {
    --swiper-slides-per-view: 4;
  }
- 
- /* Medium screens (Tablets) */
+
+.mySwiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
  @media (max-width: 1024px) {
    .mySwiper {
-     --swiper-slides-per-view: 3; /* 3 slides per view on medium screens */
+     --swiper-slides-per-view: 3; 
    }
  }
  
- /* Small screens (Mobile devices) */
  @media (max-width: 768px) {
    .mySwiper {
-     --swiper-slides-per-view: 2; /* 2 slides per view on smaller screens */
+     --swiper-slides-per-view: 2; 
    }
  }

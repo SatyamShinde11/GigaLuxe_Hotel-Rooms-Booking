@@ -1,10 +1,15 @@
-import { createContext, useState } from 'react'
-export const HotelDataContext = createContext()
-const HotelData = () => {
-    const [Responce, setResponce] = useState(null)
-    return (
-        <div>HotelData</div>
-    )
-}
+import React, { createContext, useState } from "react";
 
-export default HotelData
+export const HotelDataContext = createContext();
+
+const HotelDataProvider = ({ children }) => {
+    const [response, setResponse] = useState(null);
+
+    return (
+        <HotelDataContext.Provider value={{ response, setResponse }}>
+            {children}
+        </HotelDataContext.Provider>
+    );
+};
+
+export default HotelDataProvider; 

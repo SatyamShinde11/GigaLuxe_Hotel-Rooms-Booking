@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CINEMATIC from "../assets/CINEMATIC.mp4";
 import Room from "../assets/room.jpg";
 import { Calendar } from "primereact/calendar";
@@ -24,83 +24,42 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import Button from "../Components/Utils/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { HotelDataContext } from "../Context/HotelData";
+import axios from "axios";
 const Home = () => {
-  let RoomsArr = [
-    {
-      img: Room,
-      title: "Double Room 1",
-      description:
-        "Make yourself comfortable in any of our serene guest rooms and spacious suites...",
-      features: [
-        <MdOutlineWifi />,
-        <TbAirConditioning />,
-        <MdLocalCafe />,
-        <MdCall />,
-      ],
-      price: 500,
-      type: "Double Room",
-    },
-    {
-      img: Room,
-      title: "Single Room 1",
-      description:
-        "A cozy retreat with essential amenities for a relaxing stay.",
-      features: [<MdOutlineWifi />, <MdLocalCafe />, <MdCall />],
-      price: 350,
-      type: "Single Room",
-    },
-    {
-      img: Room,
-      title: "Deluxe Suite 1",
-      description: "Enjoy luxury and elegance in our spacious deluxe suites.",
-      features: [
-        <MdOutlineWifi />,
-        <TbAirConditioning />,
-        <MdLocalCafe />,
-        <MdCall />,
-        <MdPool />,
-      ],
-      price: 800,
-      type: "Suite",
-    },
-    {
-      img: Room,
-      title: "Family Room 1",
-      description: "Perfect for families, offering ample space and comfort.",
-      features: [
-        <MdOutlineWifi />,
-        <TbAirConditioning />,
-        <MdLocalCafe />,
-        <MdCall />,
-        <MdChildFriendly />,
-      ],
-      price: 600,
-      type: "Family Room",
-    },
-    {
-      img: Room,
-      title: "Double Room 2",
-      description:
-        "Another option for a serene stay with two comfortable beds.",
-      features: [
-        <MdOutlineWifi />,
-        <TbAirConditioning />,
-        <MdLocalCafe />,
-        <MdCall />,
-      ],
-      price: 520,
-      type: "Double Room",
-    },
-    {
-      img: Room,
-      title: "Single Room 2",
-      description: "A well-appointed single room with modern amenities.",
-      features: [<MdOutlineWifi />, <MdLocalCafe />, <MdCall />],
-      price: 370,
-      type: "Single Room",
-    },
-  ];
+  const { response, setResponse } = useContext(HotelDataContext);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      await axios
+        .get("http://localhost/api/v1/room/getRooms")
+        .then((res) => {
+          console.log(res);
+          setResponse(res.data.rooms);
+          console.log(res.data.rooms);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.error("Error fetching hotel data:", error);
+    }
+  };
+  useEffect(() => {
+    
+    const VerifyToken = localStorage.getItem("AuthToken");
+    console.log(VerifyToken);
+
+    if (!VerifyToken) {
+      return navigate("/SignUp")
+    }fetchData();
+  }, []);
+  let RoomsArray = [...response || []]
+
+
   const testimonials = [
     {
       name: "Sarah M.",
@@ -146,8 +105,9 @@ const Home = () => {
             Whether you're here for business or leisure, your perfect stay
             begins with us.
           </p>
-
-          <Button text={"Explore Rooms"} />
+          <Link to={"/AllRooms"}>
+            <Button text={"Explore Rooms"} />
+          </Link>
         </div>
         <video
           src={CINEMATIC}
@@ -168,7 +128,7 @@ const Home = () => {
           <div className="border-2 w-24 rounded-full border-purple-600"></div>
         </div>
 
-        <div className=" flex   w-[100vw]">
+        <div className="flex w-[100vw]">
           <Swiper
             slidesPerView={1}
             breakpoints={{
@@ -182,26 +142,32 @@ const Home = () => {
               clickable: true,
             }}
             autoplay={{
-              delay: 2000,
+              delay: 1500,
               disableOnInteraction: false,
             }}
             loop={true}
             modules={[Pagination, Navigation, Autoplay]}
             className="mySwiper"
           >
-            {RoomsArr.map((items, index) => {
-              const { description, features, img, price, title, type } = items;
+            {RoomsArray.map((item) => {
+              const {
+                bedType,
+                description,
+                features,
+                isBooked,
+                mainRoomImage,
+                name,
+                price,
+                roomType,
+                _id,
+              } = item;
+
               return (
-                <SwiperSlide
-                  key={index}
-                  style={{
-                    display: "flex",
-                  }}
-                >
+                <SwiperSlide key={_id} style={{ display: "flex" }}>
                   <Rooms
-                    type={type}
-                    img={img}
-                    title={title}
+                    type={roomType}
+                    img={mainRoomImage}
+                    title={name}
                     description={description}
                     features={features}
                     price={price}
@@ -279,7 +245,7 @@ const Home = () => {
       </div>
 
       <div className="flex flex-col md:flex-row  gap-6 items-center justify-center w-full md:h-auto ">
-        <div className="flex flex-col justify-center items-center gap-5 md:w-[30%] w-1/2 ">
+        <div className="flex flex-col justify-center items-center gap-5 md:w-[20%] w-1/2 ">
           <h1 className="font-Ubuntu text-4xl font-semibold ">Testimonials</h1>
           <p className="text-lg text-center">
             The hotel was amazing! The staff was friendly, the rooms were
@@ -288,7 +254,7 @@ const Home = () => {
           </p>
           <div className="border-2 w-24 rounded-full border-purple-600"></div>
         </div>
-        <div className=" flex h-auto  w-1/2 md:w-[75%]  ">
+        <div className=" flex h-auto  w-1/2 md:w-[70%]  ">
           <Swiper
             slidesPerView={1}
             breakpoints={{

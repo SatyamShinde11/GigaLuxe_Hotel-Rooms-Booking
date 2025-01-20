@@ -18,13 +18,7 @@ import BookingRooms from "./Utils/BookingRooms";
 import { useNavigate } from "react-router-dom";
 const Booking = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    let AdminKey = sessionStorage.getItem("Admin");
-    if (!AdminKey) {
-      navigate("/admin/login");
-    }
 
-  })
   const [dates, setDates] = useState(null);
   let today = new Date();
   let month = today.getMonth();

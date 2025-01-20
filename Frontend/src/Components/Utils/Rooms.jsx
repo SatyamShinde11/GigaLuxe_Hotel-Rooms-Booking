@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
-import { MdArrowRightAlt } from 'react-icons/md'
+import { MdAirplanemodeActive, MdArrowRightAlt, MdBreakfastDining, MdCall, MdLocalCafe, MdLocalTaxi, MdOutlineWifi, MdPool } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 
 const Rooms = ({ description, features, img, price, title, type }) => {
+    const featureData = [
+      { label: "Pool", icon: <MdPool /> },
+      { label: "Call", icon: <MdCall /> },
+      { label: "Taxi", icon: <MdLocalTaxi /> },
+      { label: "Cafe", icon: <MdLocalCafe /> },
+      { label: "Wifi", icon: <MdOutlineWifi /> },
+      { label: "Breakfast", icon: <MdBreakfastDining /> },
+      { label: "Airplane", icon: <MdAirplanemodeActive /> },
+    ];
   return (
     <div className='border rounded-xl p-5 w-full  md:w-[30vw]  flex flex-col gap-4 relative bg-white  '>
       <div className='relative group flex items-center'>
-        <img src={img} alt="" className="w-full rounded-lg" />
+        <img src={img} alt="" className="w-full h-96 rounded-lg" />
 
         <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
           <Link to="/RoomPreview">
@@ -21,11 +30,24 @@ const Rooms = ({ description, features, img, price, title, type }) => {
       <h2 className='font-Ubuntu text-xl'>{title}</h2>
       <p className='text-md '>{description}</p>
       <div className='flex gap-3'>
-        {features.map((icon, index) => (
-          <span className='text-xl' key={index}>{icon}</span>
-        ))}
+      {features.map((feature, index) => {
+              const featureMatch = featureData.find(
+                (item) => item.label === feature
+              );
+
+              if (!featureMatch) return null;
+
+              return (
+                <li
+                  key={index}
+                  className="flex items-center gap-2 text-xl flex-wrap text-gray-600"
+                >
+                  {featureMatch.icon}
+                </li>
+              );
+            })}
       </div>
-      <p className='text-lg'>Price: ${price}/day  </p>
+      <p className='text-lg'>Price: ₹{price}/day  </p>
     </div>
   )
 }

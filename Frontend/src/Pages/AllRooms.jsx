@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { HotelDataContext } from '../Context/HotelData.jsx';
 import RoomsFilter from '../Components/Utils/RoomsFilter'
 import Room from "../assets/room.jpg";
 import {
@@ -14,96 +15,33 @@ import {
     MdPool,
 } from "react-icons/md";
 import Button from '../Components/Utils/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+const featureData = [
+    { label: "Pool", icon: <MdPool /> },
+    { label: "Call", icon: <MdCall /> },
+    { label: "Taxi", icon: <MdLocalTaxi /> },
+    { label: "Cafe", icon: <MdLocalCafe /> },
+    { label: "Wifi", icon: <MdOutlineWifi /> },
+    { label: "Breakfast", icon: <MdBreakfastDining /> },
+    { label: "Airplane", icon: <MdAirplanemodeActive /> },
+];
 const AllRooms = () => {
-    let RoomsArr = [
-        {
-            img: Room,
-            title: "Double Room 1",
-            description:
-                "Make yourself comfortable in any of our serene guest rooms and spacious suites...",
-            features: [
-                <MdOutlineWifi />,
-                <MdAirplanemodeActive />,
-                <MdLocalCafe />,
-                <MdCall />,
-            ],
-            price: 500,
-            type: "Double Room",
-            adults: 2, // Add adults count
-            children: 0, // Add children count
-        },
-        {
-            img: Room,
-            title: "Single Room 1",
-            description:
-                "A cozy retreat with essential amenities for a relaxing stay.",
-            features: [<MdOutlineWifi />, <MdLocalCafe />, <MdCall />],
-            price: 350,
-            type: "Single Room",
-            adults: 1,
-            children: 0,
-        },
-        {
-            img: Room,
-            title: "Deluxe Suite 1",
-            description: "Enjoy luxury and elegance in our spacious deluxe suites.",
-            features: [
-                <MdOutlineWifi />,
-                <MdAirplanemodeActive />,
-                <MdLocalCafe />,
-                <MdCall />,
-                <MdPool />,
-            ],
-            price: 800,
-            type: "Suite",
-            adults: 4,
-            children: 2,
-        },
-        {
-            img: Room,
-            title: "Family Room 1",
-            description: "Perfect for families, offering ample space and comfort.",
-            features: [
-                <MdOutlineWifi />,
-                <MdAirplanemodeActive />,
-                <MdLocalCafe />,
-                <MdCall />,
-                <MdChildFriendly />,
-            ],
-            price: 600,
-            type: "Family Room",
-            adults: 2,
-            children: 2,
-        },
-        {
-            img: Room,
-            title: "Double Room 2",
-            description:
-                "Another option for a serene stay with two comfortable beds.",
-            features: [
-                <MdOutlineWifi />,
-                <MdAirplanemodeActive />,
-                <MdLocalCafe />,
-                <MdCall />,
-            ],
-            price: 520,
-            type: "Double Room",
-            adults: 2,
-            children: 1,
-        },
-        {
-            img: Room,
-            title: "Single Room 2",
-            description: "A well-appointed single room with modern amenities.",
-            features: [<MdOutlineWifi />, <MdLocalCafe />, <MdCall />],
-            price: 370,
-            type: "Single Room",
-            adults: 1,
-            children: 0,
-        },
-    ];
+    const navigate = useNavigate();
+   
+    const { response } = useContext(HotelDataContext);
 
+    let roomData = [...response || []]
+    console.log(roomData);
+    
+ useEffect(() => {
+        const VerifyToken = localStorage.getItem("AuthToken");
+        console.log(VerifyToken);
+    
+        if (!VerifyToken) {
+          return navigate("/SignUp")
+        }
+      }, []);
+  
     return (
         <div className='mt-20 w-full flex flex-wrap gap-10 '>
             <div className='w-full flex justify-center items-center '>
@@ -112,24 +50,58 @@ const AllRooms = () => {
             </div>
             <div className='lg:px-20 flex flex-wrap lg:gap-12 gap-9 md:gap-0 justify-evenly'>
                 {
-                    RoomsArr.map((items, index) => {
-                        const { img, type, title, description, features, adults, children, price } = items
+                    roomData.map((items, index) => {
+                        const {
+                            bedType,
+                            description,
+                            features,
+                            isBooked,
+                            isBookingDate,
+                            kids,
+                            mainRoomImage,
+                            man,
+                            name,
+                            price,
+                            roomFlour,
+                            roomImages,
+                            roomLocation,
+                            roomNumber,
+                            roomSize,
+                            roomType,
+                            _id,
+                        } = items
+
+                        //    
                         return (
-                            <div className='flex lg:w-[25vw] md:w-1/2 flex-col gap-5 p-3 border rounded-xl bg-white '>
-                                <img src={img} alt="" className=' rounded-xl' />
+                            <div key={_id} className='flex lg:w-[25vw] md:w-1/2 flex-col gap-5 p-3 border rounded-xl bg-white '>
+                                <img src={mainRoomImage} alt="" className=' rounded-xl' />
                                 <div className=' p-2 flex flex-col gap-4 font-semibold items-start'>
-                                    <p className='text-purple-600 text-sm '>Type: {type}</p>
-                                    <h1 className='md:text-3xl text-xl '>Title: {title}</h1>
-                                    <p className='md:text-3xl text-xl'>Description: {description}</p>
-                                    <div className='flex items-center gap-3 text-xl'>Features:  {features.map((icon, index) => (
-                                        <span className='text-xl' key={index}>{icon}</span>
-                                    ))}</div>
+                                    <p className='text-purple-600 text-sm '>Type: {roomType}</p>
+                                    <h1 className='md:text-xl text-md '>Title: {name}</h1>
+                                    <p className=' text-md 
+                                    '>Description: {description}</p>
+                                    <div className='flex items-center gap-3 text-xl'>Features: {features.map((feature, index) => {
+                                        const featureMatch = featureData.find(
+                                            (item) => item.label === feature
+                                        );
+
+                                        if (!featureMatch) return null;
+
+                                        return (
+                                            <li
+                                                key={index}
+                                                className="flex items-center gap-2 text-xl flex-wrap text-gray-600"
+                                            >
+                                                {featureMatch.icon}
+                                            </li>
+                                        );
+                                    })}</div>
                                     <div className='text-xl flex gap-5'>
-                                        <p>Adults:{adults}</p>
-                                        <p>childrens:{children}</p>
+                                        <p>Adults:{man}</p>
+                                        <p>Children:{kids}</p>
                                     </div>
-                                    <p className='text-xl font-extrabold'>Price ${price}/day</p>
-                                    <Link to="/RoomPreview">
+                                    <p className='text-xl font-extrabold'>Price ₹{price}/day</p>
+                                    <Link to={`/RoomPreview?RoomId=${_id}`} state={{ ...items, _id }}>
                                         <Button text={"Room Preview"} />
                                     </Link>
                                 </div>

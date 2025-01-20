@@ -21,8 +21,8 @@ const App = () => {
     <BrowserRouter>
       <Navbar />
       <ToastContainer
-        position="top-right" // Ensures toasts appear at the top-right
-        autoClose={5000}  // Toast auto close after 5 seconds
+        position="top-right"
+        autoClose={4000} 
         hideProgressBar={false}
         newestOnTop={true}
         closeButton={true}
@@ -52,6 +52,7 @@ const App = () => {
           <Route path="/admin/Booking" />
           <Route path="/admin/User" />
           <Route path="/admin/AddRoom" />
+          <Route path="/admin/EditRoom" />
         </Route>
       </Routes>
       <Footer />
