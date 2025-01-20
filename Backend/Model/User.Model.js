@@ -11,7 +11,19 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    phoneNumber: {
+      type: Number,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
     password: {
+      required: true,
+      type: String,
+    },
+    Token: {
       required: true,
       type: String,
     },
@@ -20,6 +32,10 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     VerificationCode: String,
+    BookedRooms: {
+      type: Array
+    },
+
   },
   { timestamps: true }
 );
