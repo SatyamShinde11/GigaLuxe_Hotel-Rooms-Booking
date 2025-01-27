@@ -1,12 +1,15 @@
-import { SendVerificationCode, WelcomeEmail } from "../libs/Email.js";
 import Users from "../Model/User.Model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Otp from "../Model/Otp.Model.js";
+import {
+  SendInvoice,
+  SendVerificationCode,
+  WelcomeEmail,
+} from "../Config/Email.js";
 
 export const UserIsAvailable = async (req, res) => {
   try {
-
     const { Token } = req;
     console.log(Token);
 
@@ -18,7 +21,6 @@ export const UserIsAvailable = async (req, res) => {
     }
 
     const email = Token;
-
 
     const existingUser = await Users.findOne({ email });
 
@@ -32,6 +34,12 @@ export const UserIsAvailable = async (req, res) => {
     const User = {
       email: existingUser.email,
       name: existingUser.name,
+      location: existingUser.location,
+      phoneNumber: existingUser.phoneNumber
+        ? existingUser.phoneNumber
+        : "Not Provided",
+      BookedRooms: existingUser.BookedRooms,
+      InvoiceData: existingUser.InvoiceData,
     };
 
     return res.status(200).json({
@@ -68,7 +76,9 @@ export const SendOtp = async (req, res) => {
       });
     }
 
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
     const newOtp = await Otp.create({
       email,
@@ -108,7 +118,6 @@ export const VerifyEmail = async (req, res) => {
     if (!otpRecord) {
       return res.status(400).json({
         message: "Invalid OTP. Not Enter Proper Email !",
-        success: false,
       });
     }
     if (otpRecord.otp !== Number(code)) {
@@ -121,11 +130,15 @@ export const VerifyEmail = async (req, res) => {
     await Otp.deleteOne({ email });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const Token = await jwt.sign({ data: email }, process.env.JWT_SECRET || "GigaLuxe");
+    const Token = await jwt.sign(
+      { data: email },
+      process.env.JWT_SECRET || "GigaLuxe"
+    );
 
     const newUser = await Users.create({
       email,
-      name, Token,
+      name,
+      Token,
       phoneNumber,
       password: hashedPassword,
       location,
@@ -144,7 +157,8 @@ export const VerifyEmail = async (req, res) => {
 
     return res.status(201).json({
       message: "User Verify And  created successfully!",
-      name, Token,
+      name,
+      Token,
       email,
       success: true,
     });
@@ -162,33 +176,41 @@ export const SignIN = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required!", success: false });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required!", success: false });
     }
 
     const user = await Users.findOne({ email });
     console.log(user.Token);
 
     if (!user) {
-      return res.status(404).json({ message: "User is Not Found!", success: false });
+      return res
+        .status(404)
+        .json({ message: "User is Not Found!", success: false });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials.", success: false });
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials.", success: false });
     }
 
-    const Token = user.Token
-
+    const Token = user.Token;
 
     return res.status(200).json({
       message: "Login successful!",
       name: user.name,
-      email: user.email, Token,
+      email: user.email,
+      Token,
       success: true,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error.", error: error.message, success: false });
+    return res
+      .status(500)
+      .json({ message: "Server error.", error: error.message, success: false });
   }
 };
 
@@ -200,10 +222,14 @@ export const LogOut = (req, res) => {
       sameSite: "strict",
     });
 
-    return res.status(200).json({ message: "Logout successful!", success: true });
+    return res
+      .status(200)
+      .json({ message: "Logout successful!", success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error.", error: error.message, success: false });
+    return res
+      .status(500)
+      .json({ message: "Server error.", error: error.message, success: false });
   }
 };
 
@@ -224,6 +250,66 @@ export const GetAllUser = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    return res.status(500).json({
+      message: "Server error. Please try again later.",
+      error: error.message,
+      success: false,
+    });
+  }
+};
+
+export const InvoiceData = async (req, res) => {
+  try {
+    console.log(req.body);
+    const {
+      Price,
+      CheckIn,
+      CheckOut,
+      RoomName,
+      UserName,
+      RazorpayPaymentId,
+      RazorpayOrderId,
+    } = req.body;
+    console.log(
+      Price,
+      CheckIn,
+      CheckOut,
+      RoomName,
+      UserName,
+      RazorpayPaymentId,
+      RazorpayOrderId
+    );
+
+    const { Token } = req;
+
+    if (!Token) {
+      return res.status(400).json({
+        message: "Token is required!",
+        success: false,
+      });
+    }
+
+    const email = Token;
+
+    const user = await Users.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    await Users.updateOne({ email }, { $push: { InvoiceData: req.body } });
+
+    await SendInvoice(email, req.body);
+
+    return res.status(200).json({
+      message: "Invoice created and sent successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       message: "Server error. Please try again later.",
       error: error.message,

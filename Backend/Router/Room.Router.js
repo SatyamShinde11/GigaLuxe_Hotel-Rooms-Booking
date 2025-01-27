@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateBooking, CreateRoom, EditBooking, EditRoom, GetBookings, GetRooms } from "../Controller/Room.Controller.js";
+import { CreateBooking, CreateRoom, EditBooking, EditRoom, GetBookings, GetRooms, VerifyBooking } from "../Controller/Room.Controller.js";
 import { uploadMiddleware } from "../Middleware/Room.Middleware.js";
 import { uploadToCloudinaryMiddleware } from "../Middleware/UploadToCloudinary.Middleware.js";
 import { AuthMiddleware } from "../Middleware/Auth.Middleware.js";
@@ -12,6 +12,7 @@ router.route("/editRoom").post(EditRoom);
 // Booking Routes
 router.route("/getBookings").get(GetBookings)
 router.route("/createBooking").post(AuthMiddleware, CreateBooking)
+router.route("/verifyBooking").post(VerifyBooking)
 router.route("/editBooking").put(EditBooking)
 
 export default router;

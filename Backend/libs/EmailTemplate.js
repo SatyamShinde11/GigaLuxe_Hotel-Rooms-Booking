@@ -161,3 +161,167 @@ export const Welcome_Email_Template = `
   </body>
   </html>
 `;
+
+export const Invoice = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f7fafc;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .invoice-box {
+      padding: 40px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #e3e4e8;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .header .logo {
+        gap: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .header .logo h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #7f5fff;
+    }
+    .header .logo p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .header .company-details {
+      text-align: right;
+    }
+    .header .company-details h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #7f5fff;
+    }
+    .header .company-details p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .invoice-details, .room-details {
+      margin-bottom: 20px;
+    }
+    .invoice-details h3, .room-details h3 {
+      font-size: 18px;
+      color: #7f5fff;
+      margin-bottom: 10px;
+    }
+    .invoice-details p, .room-details p {
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .invoice-table th, .invoice-table td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #e3e4e8;
+    }
+    .invoice-table th {
+      background-color: #f3f4f6;
+      color: #7f5fff;
+    }
+    .total {
+      text-align: right;
+      font-size: 20px;
+      font-weight: bold;
+      color: #7f5fff;
+    }
+    footer {
+      font-size: 12px;
+      color: #4a5568;
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="invoice-box">
+      <div class="header">
+        <div class="logo">
+          <h1>Giga Luxe</h1>
+          <p>Payment ID: {RazorpayPaymentId}</p>
+          <p>Order ID: {RazorpayOrderId}</p>
+        </div>
+        <div class="company-details">
+          <h2>Giga Luxe</h2>
+          <p>123 Luxury Street</p>
+          <p>Pune, Maharashtra, 411001</p>
+          <p>Phone: +1 (999)-999-9999</p>
+          <p>Email: gigaluxe@support.com</p>
+        </div>
+      </div>
+
+      <div class="invoice-details">
+        <h3>Billed To:</h3>
+        <p>User Name: {UserName}</p>
+        <p>Email: {Email}</p>
+        <p>Phone: {Phone}</p>
+      </div>
+
+      <div class="room-details">
+        <h3>Room Details:</h3>
+        <p>Room Type: {RoomName}</p>
+        <p>Check-in Date: {CheckIn}</p>
+        <p>Check-out Date: {CheckOut}</p>
+        <p>Amount: ₹{Price}</p>
+      </div>
+
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Room Type</th>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{RoomName}</td>
+            <td>{CheckIn}</td>
+            <td>{CheckOut}</td>
+            <td>₹{Price}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="total">
+        <p>Total: ₹{Price}</p>
+      </div>
+
+      <footer>
+        <p>Terms: Payment is due within 30 days from the invoice date. Late payments may incur additional charges.</p>
+        <p>We hope you enjoyed your stay at Giga Luxe. Thank you for choosing us!</p>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
+`;
+

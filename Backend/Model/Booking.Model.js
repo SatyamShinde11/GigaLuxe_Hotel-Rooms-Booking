@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const BookingSchema = mongoose.Schema(
   {
-    price: {
+    Price: {
       type: Number,
       required: true,
     },
@@ -30,6 +30,22 @@ const BookingSchema = mongoose.Schema(
       ref: "Rooms",
       required: true,
     },
+    RazorpayPaymentId: {
+      type: String,
+      required: true,
+    },
+    RazorpayOrderId: {
+      type: String,
+      required: true,
+    },
+    RazorpaySignature: {
+      type: String,
+      required: true,
+    },
+    ReceiptId: {
+      type: String,
+      required: true,
+    }
   },
   { timestamps: true }
 );

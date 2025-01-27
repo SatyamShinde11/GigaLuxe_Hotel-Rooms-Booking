@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema(
     BookedRooms: {
       type: Array
     },
+    InvoiceData: {
+      type: Array
+    }
 
   },
   { timestamps: true }

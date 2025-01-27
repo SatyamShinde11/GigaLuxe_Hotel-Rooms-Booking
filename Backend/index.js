@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-
 import connectDB from "./libs/ConnectDB.js";
 import cors from "cors";
 import UserRouter from "./Router/User.Router.js";
@@ -18,6 +17,10 @@ const corsOption = {
   origin: "*",
 };
 app.use(cors(corsOption));
+
+app.get("/",(req,res)=>{
+  res.send("Giga Luxe Server is running");
+})
 
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/room", RoomsRouter);
