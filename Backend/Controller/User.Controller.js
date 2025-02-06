@@ -7,6 +7,7 @@ import {
   SendVerificationCode,
   WelcomeEmail,
 } from "../Config/Email.js";
+import Bookings from "../Model/Booking.Model.js";
 
 export const UserIsAvailable = async (req, res) => {
   try {
@@ -22,9 +23,12 @@ export const UserIsAvailable = async (req, res) => {
 
     const email = Token;
 
-    const existingUser = await Users.findOne({ email });
+    const existingUser = await Users.findOne({ email })
+    console.log(existingUser);
+    const existingUserBooking = await Bookings.find({ User: existingUser._id }).populate("Room");
+    console.log(existingUserBooking);
 
-    if (!existingUser) {
+    if (!existingUser ) {
       return res.status(404).json({
         message: "User does not exist with this email.",
         success: false,

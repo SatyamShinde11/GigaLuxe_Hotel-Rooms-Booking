@@ -32,28 +32,25 @@ const deleteLocalFile = (filePath) => {
 
 export const uploadToCloudinaryMiddleware = async (req, res, next) => {
     try {
-        // Initialize variables to store Cloudinary URLs
+        console.log(req.body.scrollBarImages);
+        console.log(req.files['mainImage']?.[0]);
+
         const mainImage = req.files['mainImage']?.[0];
-        const scrollBarImages = req.files['scrollBarImages'] || [];
+        const scrollBarImages = req.files['scrollBarImages'] || []; 
 
-        // Upload main image to Cloudinary
         if (mainImage) {
-            console.log(mainImage);
-
             req.body.mainRoomImage = await uploadToCloudinary(mainImage.path, 'Rooms');
-            deleteLocalFile(mainImage.path); // Delete local file after upload
+            deleteLocalFile(mainImage.path);
         }
 
-        // Upload scroll bar images to Cloudinary
         req.body.roomImages = [];
         for (const image of scrollBarImages) {
-            console.log(image);
             const imageUrl = await uploadToCloudinary(image.path, 'Rooms');
             req.body.roomImages.push(imageUrl);
-            deleteLocalFile(image.path); // Delete local file after upload
+            deleteLocalFile(image.path);
         }
 
-        next(); // Proceed to the next middleware or route handler
+        next();
     } catch (error) {
         console.error('Middleware Error:', error);
         return res.status(500).json({

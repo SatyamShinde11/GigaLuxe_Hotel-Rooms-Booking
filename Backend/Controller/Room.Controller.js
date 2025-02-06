@@ -139,8 +139,17 @@ export const EditRoom = async (req, res) => {
 
 // Booking Controllers
 
-export const GetBookings = (req, res) => {
+export const GetBookings = async (req, res) => {
   try {
+    const bookings = await Bookings.find().populate("User").populate("Room");
+
+
+    if (bookings.length === 0 || !bookings) {
+      return res.status(404).json({ message: "Bookings not found", success: false });
+    }
+    console.log(bookings);
+    return res.status(200).json({ message: "Bookings found successfully", data: bookings, success: true });
+
   } catch (error) {
     res.status(500);
   }
@@ -222,10 +231,10 @@ export const VerifyBooking = async (req, res) => {
     const secret = process.env.RAZORPAY_SECRET_KEY;
 
     const { CheckIn, CheckOut, response, PaymentVerificationData } =
-      req.body?.InputData || {};
+      req.body?.InputData;
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      response || {};
-    const { amount, roomId, Token, receipt } = PaymentVerificationData || {};
+      response;
+    const { amount, roomId, Token, receipt } = PaymentVerificationData
 
     if (
       !razorpay_order_id ||
@@ -288,7 +297,7 @@ export const VerifyBooking = async (req, res) => {
     });
 
     await room.updateOne({ $push: { isBookingDate: { CheckIn, CheckOut } } });
-    await user.updateOne({ $push: { BookedRooms: {  RoomId: room._id } } });
+    await user.updateOne({ $push: { BookedRooms: { RoomId: room._id } } });
 
     const responseData = {
       ...booking._doc,
