@@ -26,67 +26,51 @@ import "swiper/css/pagination";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const RoomPreview = () => {
+  const { response } = useContext(HotelDataContext);
   const navigate = useNavigate();
   const location = useLocation();
   const roomData = location.state || {};
 
-
-  const [RoomsData, setRoomsData] = useState({
-    name: roomData.name || "",
-    description: roomData.description || "",
-    price: roomData.price || "",
-    man: roomData.man || 0,
-    kids: roomData.kids || 0,
-    bedType: roomData.bedType || "",
-    features: roomData.features || [],
-    isBooked: roomData.isBooked || false,
-    roomType: roomData.roomType || "",
-    roomSize: roomData.roomSize || "",
-    roomFlour: roomData.roomFlour || "",
-    roomNumber: roomData.roomNumber || "",
-    roomLocation: roomData.roomLocation || "",
-    id: roomData._id || "",
-    mainRoomImage: roomData.mainRoomImage || "",
-    roomImages: roomData.roomImages || [],
-    BookingDate: roomData.isBookingDate || [],
-  });
-  const featureData = [
-    { label: "Pool", icon: <MdPool /> },
-    { label: "Call", icon: <MdCall /> },
-    { label: "Taxi", icon: <MdLocalTaxi /> },
-    { label: "Cafe", icon: <MdLocalCafe /> },
-    { label: "Wifi", icon: <MdOutlineWifi /> },
-    { label: "Breakfast", icon: <MdBreakfastDining /> },
-    { label: "Airplane", icon: <MdAirplanemodeActive /> },
-  ];
-
-  const [mainImage, setMainImage] = useState(RoomsData.mainRoomImage);
+  const [RoomsData, setRoomsData] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-
   const [dates, setDates] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
 
   useEffect(() => {
     const VerifyToken = localStorage.getItem("AuthToken");
     if (!VerifyToken) {
-      return navigate("/SignUp");
+      navigate("/SignUp");
     }
+  }, [navigate]);
 
-    const newDisabledDates = [];
-    roomData.isBookingDate.forEach((item) => {
-      const checkInDate = item.CheckIn.split("/").reverse().join("-");
-      const checkOutDate = item.CheckOut.split("/").reverse().join("-");
-      const checkIn = new Date(checkInDate);
-      const checkOut = new Date(checkOutDate);
+  useEffect(() => {
+    const foundRoom = response.find((item) => item._id === roomData);
+    if (foundRoom) {
+      setRoomsData(foundRoom);
+      setMainImage(foundRoom.mainRoomImage);
+    }
+  }, [response, roomData]);
+
+  useEffect(() => {
+    if (!RoomsData?.isBookingDate) return;
+
+    const newDisabledDates = RoomsData.isBookingDate.flatMap((item) => {
+      const checkIn = new Date(item.CheckIn.split("/").reverse().join("-"));
+      const checkOut = new Date(item.CheckOut.split("/").reverse().join("-"));
 
       let currentDate = new Date(checkIn);
+      const datesArray = [];
       while (currentDate <= checkOut) {
-        newDisabledDates.push(new Date(currentDate));
+        datesArray.push(new Date(currentDate));
         currentDate.setDate(currentDate.getDate() + 1);
       }
+      return datesArray;
     });
+
     setDisabledDates(newDisabledDates);
-  }, [roomData]);
+  }, [RoomsData]);
+console.log(RoomsData);
 
   const dateTemplate = (date) => {
     const isDisabledDate = disabledDates.some(
@@ -113,15 +97,15 @@ const RoomPreview = () => {
   };
 
   let today = new Date();
-  let month = today.getMonth();
-  let year = today.getFullYear();
-  let nextMonth = month === 11 ? 0 : month + 1;
-  let nextYear = nextMonth === 0 ? year + 1 : year;
+  let nextMonth = today.getMonth() === 11 ? 0 : today.getMonth() + 1;
+  let nextYear = nextMonth === 0 ? today.getFullYear() + 1 : today.getFullYear();
 
   let minDate = new Date();
   let maxDate = new Date();
   maxDate.setMonth(nextMonth);
   maxDate.setFullYear(nextYear);
+
+  if (!RoomsData) return <p>Loading room data...</p>;
 
   return (
     <div className="w-full xl:w-[1280px] py-2 mt-10 h-auto flex flex-col gap-16 items-center font-Poppins overflow-hidden">
@@ -140,19 +124,10 @@ const RoomPreview = () => {
             }}
             loop={true}
             modules={[Pagination, FreeMode, Navigation, Thumbs, Autoplay]}
-            className="mySwiper2 lg:w-[550px] sm:w-[550px] md:w-[650px] md:h-auto sm:h-[30vh] w-[350px]"
+            className="mySwiper2 lg:w-[550px] sm:w-[550px] md:w-[650px] w-[350px]"
           >
-            <SwiperSlide
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <img
-                src={mainImage}
-                alt="Main Room"
-                className="rounded-xl w-full"
-              />
+            <SwiperSlide style={{ display: "flex", justifyContent: "center" }}>
+              <img src={mainImage} alt="Main Room" className="rounded-xl w-full" />
             </SwiperSlide>
           </Swiper>
 
@@ -168,16 +143,10 @@ const RoomPreview = () => {
             }}
             watchSlidesProgress={true}
             modules={[FreeMode, Navigation, Thumbs, Autoplay]}
-            className="mySwiper lg:w-[550px] sm:w-[550px] md:w-[650px] md:h-auto w-[350px]"
+            className="mySwiper lg:w-[550px] sm:w-[550px] md:w-[650px] w-[350px]"
           >
-            {RoomsData.roomImages.map((items, index) => (
-              <SwiperSlide
-                key={index}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
+            {RoomsData.roomImages?.map((items, index) => (
+              <SwiperSlide key={index} style={{ display: "flex", justifyContent: "center" }}>
                 <img
                   src={items}
                   alt={`Thumbnail ${index + 1}`}
@@ -194,80 +163,35 @@ const RoomPreview = () => {
           <h1 className="text-3xl">Title: {RoomsData.name}</h1>
           <p className="text-md">{RoomsData.description}</p>
           <p className="text-md">Bed: {RoomsData.bedType}</p>
-          <p className="flex gap-2 text-md">
-            Occupancy:
-            <div className="flex gap-2">
-              <p>Adults: {RoomsData.man}</p>
-              <p>Children: {RoomsData.kids}</p>
-            </div>
-          </p>
-          <p className="text-md">
-            Location:
-            {` City: ${RoomsData.roomLocation}, Flour No: ${RoomsData.roomFlour}, Room No: ${RoomsData.roomNumber}`}
-          </p>
+          <p className="text-md">Occupancy: Adults {RoomsData.man}, Children {RoomsData.kids}</p>
+          <p className="text-md">Location: City {RoomsData.roomLocation}, Floor {RoomsData.roomFlour}, Room {RoomsData.roomNumber}</p>
           <p className="text-md">Size: {RoomsData.roomSize}</p>
-          <div className="flex items-center gap-3 text-md">
-            Features:
-            {RoomsData.features.map((feature, index) => {
-              const featureMatch = featureData.find(
-                (item) => item.label === feature
-              );
-              if (!featureMatch) return null;
-              return (
-                <li
-                  key={index}
-                  className="flex items-center gap-2 text-xl flex-wrap text-gray-600"
-                >
-                  {featureMatch.icon}
-                </li>
-              );
-            })}
-          </div>
-
           <p className="text-xl">Price ₹{RoomsData.price}/day</p>
-          <div className="flex flex-col md:flex-row items-start justify-between gap-5 md:items-center">
-            <div className="p-2 border-purple-600 border rounded-lg flex justify-content-center">
-              <Calendar
-                style={{ color: "purple", border: "none", outline: "none" }}
-                inputClassName="!outline-none focus:!outline-none !border-none"
-                className="border-none"
-                value={dates}
-                onChange={handleDateChange}
-                minDate={minDate}
-                maxDate={maxDate}
-                dateFormat="dd/mm/yy"
-                selectionMode="multiple"
-                readOnlyInput
-                hideOnRangeSelection
-                showIcon
-                disabledDates={disabledDates}
-                dateTemplate={dateTemplate}
-              />
-            </div>
-            <Link
-              to={`/RoomBooking?RoomId=${RoomsData.id}`}
-              state={[
-                { ...RoomsData },
-                { id: RoomsData.id },
-                { BookingDates: dates },
-              ]}
-            >
-              <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-xl text-white rounded-md font-medium flex items-center justify-center">
-                Book Now
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-6 items-center justify-center w-full">
-        <Link to={`/AllRooms`}>
-          <a className="text-xl hover:text-purple-600 font-semibold flex items-center gap-2">
-            <MdArrowBackIosNew />
-            View All Rooms
-            <MdArrowForwardIos />
-          </a>
-        </Link>
+          <div className="p-2 border-purple-600 border rounded-lg">
+            <Calendar
+              inputClassName="!outline-none focus:!outline-none !border-none"
+              className="border-none"
+              value={dates}
+              onChange={handleDateChange}
+              minDate={minDate}
+              maxDate={maxDate}
+              dateFormat="dd/mm/yy"
+              selectionMode="multiple"
+              readOnlyInput
+              hideOnRangeSelection
+              showIcon
+              disabledDates={disabledDates}
+              dateTemplate={dateTemplate}
+            />
+          </div>
+
+          <Link to={`/RoomBooking?RoomId=${RoomsData._id}`} state={[RoomsData, { BookingDates: dates }]}>
+            <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-xl text-white rounded-md font-medium">
+              Book Now
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

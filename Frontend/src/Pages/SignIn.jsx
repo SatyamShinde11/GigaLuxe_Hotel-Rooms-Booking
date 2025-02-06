@@ -27,10 +27,8 @@ const SignIn = () => {
           },
         }
       ).then((response) => {
-        console.log(response);
 
         const { email, name, Token } = response.data;
-        console.log(Token);
 
         localStorage.setItem("AuthToken", `Giga+${Token}+Luxe`);
 

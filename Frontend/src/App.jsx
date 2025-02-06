@@ -14,21 +14,22 @@ import Admin from "./Admin/App.jsx";
 import ProtectRoute from "./Components/ProtectRoute.jsx";
 import Profile from "./Pages/Profile.jsx";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
+
   return (
-    <BrowserRouter>
-      <Navbar />
+    <BrowserRouter> <Navbar />
       <ToastContainer
         position="top-right"
-        autoClose={4000} 
+        autoClose={4000}
         hideProgressBar={false}
         newestOnTop={true}
         closeButton={true}
         pauseOnHover={true}
       />
       <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/About" element={<About />} />

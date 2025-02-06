@@ -37,25 +37,21 @@ const Home = () => {
       await axios
         .get("http://localhost/api/v1/room/getRooms")
         .then((res) => {
-          console.log(res);
           setResponse(res.data.rooms);
-          console.log(res.data.rooms);
         })
         .catch((err) => {
-          console.log(err);
         });
     } catch (error) {
       console.error("Error fetching hotel data:", error);
     }
   };
   useEffect(() => {
-    
+
     const VerifyToken = localStorage.getItem("AuthToken");
-    console.log(VerifyToken);
 
     if (!VerifyToken) {
       return navigate("/SignUp")
-    }fetchData();
+    } fetchData();
   }, []);
   let RoomsArray = [...response || []]
 
@@ -164,11 +160,11 @@ const Home = () => {
 
               return (
                 <SwiperSlide key={_id} style={{ display: "flex" }}>
-                  <Rooms
+                  <Rooms _id={_id}
                     type={roomType}
                     img={mainRoomImage}
                     title={name}
-                    description={description}
+                    description={description.split(' ').length > 8 ? description.split(' ').slice(0, 8).join(' ') + '...' : description}
                     features={features}
                     price={price}
                   />

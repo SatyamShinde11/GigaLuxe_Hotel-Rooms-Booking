@@ -14,26 +14,11 @@ import {
 import { CiMenuKebab } from "react-icons/ci";
 
 import { MdDeleteForever, MdRefresh } from "react-icons/md";
-import BookingRooms from "./Utils/BookingRooms";
+import BookingRooms from "./Utils/BookingRooms.jsx";
 import { useNavigate } from "react-router-dom";
 const Booking = () => {
   const navigate = useNavigate();
 
-  const [dates, setDates] = useState(null);
-  let today = new Date();
-  let month = today.getMonth();
-  let year = today.getFullYear();
-
-  let nextMonth = month === 11 ? 0 : month + 1;
-  let nextYear = nextMonth === 0 ? year + 1 : year;
-  console.log(dates);
-
-  let minDate = new Date();
-
-  let maxDate = new Date();
-
-  maxDate.setMonth(nextMonth);
-  maxDate.setFullYear(nextYear);
   const tableRef = useRef(null);
 
   const { onDownload } = useDownloadExcel({
@@ -41,6 +26,7 @@ const Booking = () => {
     filename: "Users table",
     sheet: "Users",
   });
+
   let users = [
     {
       id: 1,
@@ -201,20 +187,15 @@ const Booking = () => {
   ];
 
   return (
-    <div className="   bg-gray-300/20 p-6  w-full  h-auto flex flex-col  font-Poppins overflow-hidden">
+    <div className=" w-full h-auto mt-20 flex flex-col font-Poppins overflow-hidden">
       <div className="flex flex-col gap-6">
-        <div className="bg-white flex flex-col gap-4 p-4 w-[70vw]">
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold">Booking Details</h1>
+        <div className="bg-white flex flex-col gap-4 p-4 w-[70vw] ">
+          <div className="flex items-center flex-wrap gap-3 md:gap-0  justify-center md:justify-between">
+            <h1 className="font-semibold text-nowrap ">Booking Details</h1>
             <div className="relative    flex">
-              {/* <CiMenuKebab
-                className="text-2xl cursor-pointer"
-                onClick={() => {
-                  setPopUp(true);
-                }}
-              /> */}
 
-              <div className="flex justify-between gap-2 items-center px-3  py-3 ">
+
+              <div className="flex flex-wrap justify-between gap-2 items-center px-3  py-3 ">
                 <FaRegFileExcel className="text-xl text-purple-600" />{" "}
                 <button
                   onClick={onDownload}
@@ -224,17 +205,16 @@ const Booking = () => {
                   Export Data{" "}
                 </button>
               </div>
-        
-              <div className="flex justify-between gap-2 items-center px-3  py-3 ">
+
+              <div className="flex justify-between  items-center px-3  py-3 ">
                 <MdRefresh className=" cursor-pointer text-2xl text-purple-600 font-semibold " />{" "}
               </div>
 
             </div>
           </div>
 
-          <div className="relative ">
-        
-        <BookingRooms/>
+          <div className="relative overflow-auto scroll- ">
+            <BookingRooms />
           </div>
         </div>
       </div>

@@ -60,7 +60,7 @@ const Rooms = () => {
   const currentData = Rooms.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
-  );
+  ); 
 
 
   const handlePageChange = (pageNumber) => {
@@ -93,10 +93,10 @@ const Rooms = () => {
   }, []);
 
   return (
-    <div className="   bg-gray-300/20 p-6  w-full  h-auto flex flex-col  font-Poppins overflow-hidden">
+    <div className=" w-full h-auto mt-20 flex flex-col font-Poppins overflow-hidden">
       <div className="flex flex-col gap-6">
-        <div className="bg-white flex flex-col gap-4 p-4 w-[70vw]">
-          <div className="flex items-center justify-between">
+        <div className="bg-white flex flex-col gap-4 p-4">
+          <div className="flex items-center flex-wrap gap-6 justify-center md:justify-between">
             <h1 className="font-semibold">Rooms Details</h1>
             <div className="relative    flex">
               <div className="flex justify-between gap-2 items-center px-3  py-3 ">
@@ -324,9 +324,9 @@ const Rooms = () => {
                         <th scope="col" className="px-3 py-3">
                           Price
                         </th>
-                        <th scope="col" className="px-3 py-3">
+                        {/* <th scope="col" className="px-3 py-3">
                           Booked
-                        </th>
+                        </th> */}
                         <th scope="col" className="px-3 py-3">
                           Actions
                         </th>
@@ -364,7 +364,7 @@ const Rooms = () => {
                             <td className="px-3 py-4">{man}</td>
                             <td className="px-3 py-4">{kids}</td>
                             <td className="px-3 py-4">${price}</td>
-                            <td className="px-3 py-4">{isBooked ? "yes" : "no"}</td>
+                            {/* <td className="px-3 py-4">{isBooked ? "yes" : "no"}</td> */}
                             <td className="px-3 py-4">
                               <div className="flex items-center justify-between">
                                 <Link

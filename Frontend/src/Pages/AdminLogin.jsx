@@ -17,14 +17,12 @@ const AdminLogin = () => {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      console.log(res.data);
       const { AdminToken } = res.data
 
       sessionStorage.setItem("Admin", AdminToken);
       toast.success("Admin Login in successful!");
       navigate("/admin/");
     }).catch((err) => {
-      console.log(err);
       toast.error(err.response.data.message || "Admin Login failed.");
     })
 

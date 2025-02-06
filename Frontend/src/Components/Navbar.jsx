@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import { MdMenu, MdOutlineClose } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import axios from "axios";
+import { AuthDataContext } from "../Context/AuthData";
 
 const Navbar = () => {
+  const { authResponse, setAuthResponse } = useContext(AuthDataContext);
   const [menu, setMenu] = useState(false);
   const [PopUp, setPopUp] = useState(false);
   const [user, setUser] = useState({ name: "", email: "" });
@@ -30,7 +32,7 @@ const Navbar = () => {
         },
       }).then((response) => {
         console.log(response);
-
+        setAuthResponse(response)
         const { email, name } = response.data.User;
         setUser({ email, name });
         setIsAuthenticated(true);

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 
 const SignUP = () => {
   const [userData, setUserData] = useState({
@@ -45,9 +44,10 @@ const SignUP = () => {
     try {
       await axios.post("http://localhost/api/v1/user/sendOtp", {
         email: userData.email,
-      });
-      toast.success("OTP has been sent to your email.");
-      setVisibleOtpBox(true);
+      })
+        toast.success("OTP has been sent to your email.");
+        setVisibleOtpBox(true);
+
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to send OTP. Please try again."
