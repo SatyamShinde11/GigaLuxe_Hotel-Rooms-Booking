@@ -47,11 +47,12 @@ const Home = () => {
   };
   useEffect(() => {
 
-    const VerifyToken = localStorage.getItem("AuthToken");
+    // const VerifyToken = localStorage.getItem("AuthToken");
 
-    if (!VerifyToken) {
-      return navigate("/SignUp")
-    } fetchData();
+    // if (!VerifyToken) {
+    //   return navigate("/SignUp")
+    // }
+    fetchData();
   }, []);
   let RoomsArray = [...response || []]
 
